@@ -181,9 +181,9 @@ def photo_data_preparation(info):
             likes = all_key["likes"]['count']
             size = all_key['sizes'][-1]['type']
             jpg_url = all_key['sizes'][-1]['url']
-
+            print(photo_name[0])
             data.append({
-                'photo_name': photo_name,
+                'photo_name': photo_name[0],
                 'likes': likes,  # количество лайков
                 'size': size,  # размер
                 'url': jpg_url  # ссылка на фото в виде attachment(https://dev.vk.com/method/messages.send)
