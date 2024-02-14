@@ -1,0 +1,42 @@
+[
+  {
+    "size": "s",
+    "max_side": 75
+  },
+  {
+    "size": "m",
+    "max_side": 130
+  },
+  {
+    "size": "x",
+    "max_side": 604
+  },
+  {
+    "size": "o",
+    "max_side": 130
+  },
+  {
+    "size": "p",
+    "max_side": 200
+  },
+  {
+    "size": "q",
+    "max_side": 320
+  },
+  {
+    "size": "r",
+    "max_side": 510
+  },
+  {
+    "size": "y",
+    "max_side": 807
+  },
+  {
+    "size": "z",
+    "max_side": 1080
+  },
+  {
+    "size": "w",
+    "max_side": 2560
+  }
+]
