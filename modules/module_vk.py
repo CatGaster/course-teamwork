@@ -143,14 +143,20 @@ class VK:
                 sorted_size_photo = sorting_sizes_photo(photo_data)
 
                 for photo in sorted_size_photo:
-                    attachments.append('{}'.format(photo['url']))
+                    attachments.append({
+                        'photo_name': photo['photo_name'],
+                        'href': photo['url']
+                    })
+                    # attachments.append('{}'.format(photo['url']))
 
                 # выводим результат поиска в консоль
                 print('результат поиска:')
+                print('**************************')
+                print('id пользователя:', user['id'])
                 print("Имя:", user['first_name'])
                 print("Фамилия:", user['last_name'])
                 print("Ссылка на профиль:", profile_url)
-                print("Фотографии:", attachments)
+                pprint(attachments)
                 print('**************************')
 
                 # Запрос поиска следующего пользователя. Enter-разрешить, N-остановить программу
@@ -170,15 +176,20 @@ def photo_data_preparation(info):
     """
     data = []
     for all_key in info['items']:
-        likes = all_key["likes"]['count']
-        size = all_key['sizes'][-1]['type']
-        jpg_url = all_key['sizes'][-1]['url']
+        try:
+            photo_name = f'{all_key["post_id"]}_{all_key["owner_id"]}.jpg',
+            likes = all_key["likes"]['count']
+            size = all_key['sizes'][-1]['type']
+            jpg_url = all_key['sizes'][-1]['url']
 
-        data.append({
-            'likes': likes,  # количество лайков
-            'size': size,  # размер
-            'url': jpg_url  # ссылка на фото в виде attachment(https://dev.vk.com/method/messages.send)
-        })
+            data.append({
+                'photo_name': photo_name,
+                'likes': likes,  # количество лайков
+                'size': size,  # размер
+                'url': jpg_url  # ссылка на фото в виде attachment(https://dev.vk.com/method/messages.send)
+            })
+        except KeyError:
+            continue
 
     return data
 
