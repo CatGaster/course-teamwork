@@ -39,19 +39,29 @@ session = Session()
 
 create_table(create_connection_DB())
     
-
 def add_new_user(user):
-    # нужна проверка, если пользователь уже есть в базе
-    user = Users(**user)
-    session.add(user)
+    users = Users(**user)
+    session.add(users)
     session.commit()
 
 
+def check_users(candidate_id):
+    # проверка на то, есть ли пользователь в БД
+    checking_user = session.query(Users).filter_by(user_id=candidate_id).first()
+    return checking_user is not None
 
-# def add_photos(photo_album):
-#     # for photo in photo_album:
-#     user_photos = Photos(photo_album)
-#     session.add(user_photos)    
 
-    
-    
+# код пока не работает, недоделан
+# def last_users():
+#     favorite_canidate = session.query(Users).order_by(Users.user_id.desc()).first()
+#     return favorite_canidate
+
+
+# код пока не доделан
+# def add_favorite(user, candidate):
+#     # favorite_canidate = session.query(Users).order_by(Users.user_id.desc()).first()
+#     new_favorite_user = Favorites(user_id=user, favorite_user_id=candidate)
+#     session.add(new_favorite_user) 
+
+
+

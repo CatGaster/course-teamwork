@@ -6,21 +6,10 @@ Base = declarative_base()
 
 
 class Users(Base):
-    """
-    Класс для создания отношения user - содержащую информацию о пользователях:
-    user_id - уникальное id пользователя в базе данных
-    first_name - имя пользователя 
-    last_name - фамилия пользователя
-    gender - пол пользователя
-    age - возраст пользователя
-    link - ссылка на пользователя Вконтакте
-    city - город пользователя
-    """
-
     __tablename__ = 'users'
 
-    id = sq.Column(sq.Integer, primary_key=True)
-    user_id = sq.Column(sq.String(length=40))
+    user_id = sq.Column(sq.Integer, primary_key=True)
+    vk_id = sq.Column(sq.String(length=40))
     first_name = sq.Column(sq.String(length=40))
     last_name = sq.Column(sq.String(length=40))
     # gender = sq.Column(sq.String(length=40), nullable=False)
@@ -28,23 +17,15 @@ class Users(Base):
     user_link = sq.Column(sq.String(length=40))
     # city = sq.Column(sq.String(length=100), nullable=False)
 
+    def __str__(self):
+        return f'{self.user_id}'
 
 
 class Photos(Base):
-    """
-    Класс для создания отношения photos - содержащая ссылки и количество лайков фотографий
-    photo_id -  уникальное id каждой фотографии
-    user_id - уникальное id пользователя из отношения user, чьи фотографии добавлены в БД
-    likes - количество лайков
-    link - ссылка на фотографию
-    user - связь отношения photos с отношением user
-    """
-
     __tablename__ = 'photos'
     
     photo_id = sq.Column(sq.Integer, primary_key=True)
-    id = sq.Column(sq.Integer, sq.ForeignKey('users.id'), nullable=False)
-    # likes = sq.Column(sq.Integer, nullable=False)
+    id = sq.Column(sq.Integer, sq.ForeignKey('users.user_id'), nullable=False)
     href = sq.Column(sq.String(length=40), nullable=False)
     user = relationship(Users, backref='photos')
 
@@ -59,9 +40,11 @@ class Favorites(Base):
     
     """
     __tablename__ = 'favorite'
-    favorite_id = sq.Column(sq.Integer, primary_key=True)
-    user_id = sq.Column(sq.Integer, sq.ForeignKey('users.id'), nullable=False)
-    user = relationship(Users, backref='favorite')
+    id = sq.Column(sq.Integer, primary_key=True)
+    user_id = sq.Column(sq.Integer, sq.ForeignKey('users.user_id'), nullable=False)
+    favorite_user_id = sq.Column(sq.Integer, sq.ForeignKey('users.user_id'), nullable=False)
+
+    # user = relationship(Users, backref='favorite')
 
 
 # class Black_list(Base):
