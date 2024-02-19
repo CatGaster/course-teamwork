@@ -4,7 +4,7 @@ import psycopg2
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
-from model import Users, Photos, Favorites, create_table
+from model import Users, Photos, Favorites, Blacklist, create_table
 
 
 
@@ -19,8 +19,8 @@ def create_delete_db(name, command, if_):
         cur.execute(sql)
     conn_.close()    
 
-create_delete_db(name=os.getenv('NAME_DB'), command='DROP', if_='IF EXISTS')
-create_delete_db(name=os.getenv('NAME_DB'), command='CREATE', if_='')  
+# create_delete_db(name=os.getenv('NAME_DB'), command='DROP', if_='IF EXISTS')
+# create_delete_db(name=os.getenv('NAME_DB'), command='CREATE', if_='')  
 
     
 
@@ -39,6 +39,8 @@ session = Session()
 
 create_table(create_connection_DB())
     
+
+
 def add_new_user(user):
     users = Users(**user)
     session.add(users)
@@ -47,21 +49,27 @@ def add_new_user(user):
 
 def check_users(candidate_id):
     # проверка на то, есть ли пользователь в БД
-    checking_user = session.query(Users).filter_by(user_id=candidate_id).first()
-    return checking_user is not None
-
-
-# код пока не работает, недоделан
-# def last_users():
-#     favorite_canidate = session.query(Users).order_by(Users.user_id.desc()).first()
-#     return favorite_canidate
-
-
-# код пока не доделан
-# def add_favorite(user, candidate):
-#     # favorite_canidate = session.query(Users).order_by(Users.user_id.desc()).first()
-#     new_favorite_user = Favorites(user_id=user, favorite_user_id=candidate)
-#     session.add(new_favorite_user) 
+    checking_user = session.query(Users).filter_by(owner_id=candidate_id).first()
+    return checking_user is None
 
 
 
+def add_favorite(user, candidate):
+    user_id = session.query(Users).filter_by(owner_id=str(user['owner_id'])).first()
+    candidate_id = session.query(Users).filter_by(owner_id=str(candidate['owner_id'])).first()
+    new_favorite_user = Favorites(user_id=user_id.user_id, 
+                                  favorite_user_id=candidate_id.user_id)
+    session.add(new_favorite_user) 
+    session.commit()
+
+
+
+def add_black_list(user, candidate):
+    user_id = session.query(Users).filter_by(owner_id=str(user['owner_id'])).first()
+    candidate_id = session.query(Users).filter_by(owner_id=str(candidate['owner_id'])).first()
+    new_ignored_user = Blacklist(user_id=user_id.user_id, 
+                                  black_list_id=candidate_id.user_id)
+    session.add(new_ignored_user) 
+    session.commit()
+
+# print(check_users('344025107'))

@@ -17,7 +17,7 @@ class VK:
         self.vk = self.vk_api.get_api()
         
 
-        
+
     def get_user_info(self, user_id):
         try:
             response = self.vk_api.method('users.get',
@@ -71,7 +71,7 @@ class VK:
                                    {'user_ids': user_id})
             user_info_self = response[0]
             
-            result = {'vk_id': user_info_self['id'],
+            result = {'owner_id': user_info_self['id'],
                   'first_name': user_info_self['first_name'],
                   'last_name': user_info_self['last_name'],
                   'user_link': f"https://vk.com/id{user_info_self['id']}"
@@ -150,7 +150,7 @@ class VK:
                 if user['is_closed']:  # пропускаем если у пользователя профиль приватный
                     continue
                 profile_url = f"https://vk.com/id{user['id']}"
-                result = {'vk_id': user['id'],
+                result = {'owner_id': user['id'],
                   'first_name': user['first_name'],
                   'last_name': user['last_name'],
                   'user_link': profile_url
