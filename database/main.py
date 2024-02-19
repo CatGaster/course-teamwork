@@ -1,11 +1,15 @@
+import os
+
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
-import os
+from dotenv import load_dotenv
+
 from model import Users, Photos, Favorites, create_table
 
-    
-    
-def create_connection_DB():
+load_dotenv()
+
+
+def create_connection_db():
     """Функция для создания объекта-движка, для соединения с БД"""
     
     engine = sqlalchemy.create_engine(
@@ -16,13 +20,12 @@ def create_connection_DB():
     return engine
 
 
-Session = sessionmaker(bind=create_connection_DB())
+Session = sessionmaker(bind=create_connection_db())
 session = Session()
 
 
-
 if __name__ == '__main__':
-    create_table(create_connection_DB())
+    create_table(create_connection_db())
 
     
 

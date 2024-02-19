@@ -10,12 +10,10 @@ keyboard_main = VkKeyboard(one_time=True)
 keyboard_main.add_button(label='найти пару', color=VkKeyboardColor.PRIMARY)
 
 
-
 class Bot:
     def __init__(self) -> None:
         self.session = vk_api.VkApi(token=os.getenv('TOKEN_BOT'))
         self.longpoll = VkLongPoll(self.session)
-        
 
     def func_main(self):
         """Функция-вызов остальных функций, пока еще не знаю, как его назвать"""
@@ -30,7 +28,6 @@ class Bot:
                     self.start(user_id)
                 else:
                     self.send_msg(user_id, 'Тут пока я еще недодела хехе')
-        
 
     def start(self, user_id):
         # Функция для кнопки начать поиск пары
@@ -38,8 +35,6 @@ class Bot:
         keyboard  = keyboard_main.get_keyboard()
         responce = self.send_msg(user_id, msg, keyboard=keyboard)
         return responce
-    
-
 
     def send_msg(self, user_id, message, keyboard=None):
         """Метод для отправки сообщений ботом, возвращает отправленное сообщение"""
@@ -51,9 +46,6 @@ class Bot:
                         'keyboard': keyboard,
                         })
         return responce
-
-
-
 
 
 if __name__ == '__main__':

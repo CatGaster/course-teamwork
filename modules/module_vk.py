@@ -1,5 +1,4 @@
 import os
-import json
 from pprint import pprint
 from datetime import datetime
 
@@ -108,7 +107,7 @@ class VK:
             print("Ошибка при запросе к VK API:", e)
             return None
 
-    def search_users(self, age_from, age_to, sex, city_id):
+    def search_users(self, age_from, age_to, sex, city_id, weight=3):
         """
         Метод осуществляет поиск пользователей для знакомств, по входящим параметрам.
         """
@@ -137,17 +136,16 @@ class VK:
                                        album_id='profile',
                                        rev=1,
                                        extended=1,
-                                       photo_sizes=1)
+                                       photo_sizes=0)
 
                 photo_data = photo_data_preparation(photos)
-                sorted_size_photo = sorting_sizes_photo(photo_data)
+                sorted_size_photo = sorted(photo_data, key=lambda item: item['likes'], reverse=True)[0:weight]
 
                 for photo in sorted_size_photo:
                     attachments.append({
                         'photo_name': photo['photo_name'],
                         'href': photo['url']
                     })
-                    # attachments.append('{}'.format(photo['url']))
 
                 # выводим результат поиска в консоль
                 print('результат поиска:')
@@ -192,22 +190,6 @@ def photo_data_preparation(info):
             continue
 
     return data
-
-
-def sorting_sizes_photo(data, weight=3):
-    """
-    Функция сортирует и возвращает топ-3 фотографий пользователя, в максимальном размере
-    """
-    with open('../size_photo.json', encoding='utf-8') as file:  # Файл size_photo.json шаблон размеров фотографий.
-        size_info = json.load(file)                             # по которому сравниваем и находим максимальный размер.
-
-    for data_key in data:
-        for size_photo_key in size_info:
-            if data_key['size'] in size_photo_key['size']:
-                data_key['max_side'] = size_photo_key['max_side']
-
-    data_sorted = sorted(data, key=lambda item: item['likes'], reverse=True)[0:weight]
-    return data_sorted
 
 
 if __name__ == '__main__':

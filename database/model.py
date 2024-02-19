@@ -28,7 +28,6 @@ class Users(Base):
     city = sq.Column(sq.String(length=100), nullable=False)
 
 
-
 class Photos(Base):
     """
     Класс для создания отношения photos - содержащая ссылки и количество лайков фотографий
@@ -48,7 +47,6 @@ class Photos(Base):
     user = relationship(Users, backref='photos')
 
 
-
 class Favorites(Base):
     """
     Класс для создания отношения favorite, содержащая список избранных пользователей
@@ -63,7 +61,7 @@ class Favorites(Base):
     user = relationship(Users, backref='favorite')
 
 
-class Black_list(Base):
+class BlackList(Base):
     __tablename__ = 'black_list'
 
     id = sq.Column(sq.Integer, primary_key=True)
