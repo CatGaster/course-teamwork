@@ -4,3 +4,4 @@ venv/
 modules/
 database/
 __pycache__/
+__init__.py
