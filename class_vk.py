@@ -54,7 +54,6 @@ class VK:
                 if self.my_city == "":
                     city = class_bot.Bot().get_city(user_id)
                     self.my_city = city
-                    bot_send = class_bot.Bot().send_msg(user_id, f'Поиск по городу: {city}')
                 else:
                     city = self.my_city
                 city_id = self.get_city_id(city, user_id)
@@ -62,8 +61,7 @@ class VK:
                     city = class_bot.Bot().get_city(user_id)
                     city_id = self.get_city_id(city, user_id)
                     self.my_city = city
-                    bot_send = class_bot.Bot().send_msg(user_id, f'Поиск по городу: {city}')
-
+                    
                     
             user_link = f"https://vk.com/id{user_info['id']}"
 
@@ -104,7 +102,7 @@ class VK:
                     print (f"Город {city_name} - {city_id}")
                     return city_id
                 else:
-                    bot_send=class_bot.Bot().send_msg(user_id, f'Город {self.founded} не найден')
+                    bot_send=class_bot.Bot().send_msg(user_id, f'Город {self.my_city} не найден')
                     print(f"Город не найден")                
                     return None
                                                  
