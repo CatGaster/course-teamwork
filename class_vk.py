@@ -3,19 +3,21 @@ from datetime import datetime
 import json
 import operator
 from random import randrange
+from dotenv import load_dotenv
+from vk_api.longpoll import VkLongPoll, VkEventType
 
 import vk_api
-
+import class_bot
 import main
 
+load_dotenv()
 
 class VK:
     def __init__(self):
         self.vk_api = vk_api.VkApi(token = os.getenv('VK_TOKEN'))
         self.session = vk_api.VkTools(self.vk_api)  
-                
+        self.my_city = ""
         self.vk = self.vk_api.get_api()
-        
 
         
     def get_user_info(self, user_id):
@@ -32,8 +34,9 @@ class VK:
                         (this_year.month, this_year.day) < (birthday.month, birthday.day))
                 
             except KeyError:
-                birth_day = input('Введите дату вашего рождения: ')
-                birthday = datetime.strptime(birth_day, '%d.%m.%Y')
+                # birth_day = input('Введите дату вашего рождения: ')
+                birthday = class_bot.Bot().get_birthday(user_id)
+                birthday = datetime.strptime(birthday, '%d.%m.%Y')
                 age = this_year.year - birthday.year - (
                         (this_year.month, this_year.day) < (birthday.month, birthday.day))            
                  
@@ -46,9 +49,18 @@ class VK:
             try:
                 city = user_info['city']['title']
                 city_id = user_info['city']['id']
-            except KeyError:                               
-                city = input('Введите ваш город: ')
+            # при отсутствии города в данных пользователя
+                #посылаем сообщение с вопросом о городе и возвращаем результат
+                # записываем результат для будущего использования и используем его    
+            except KeyError:     
+                if self.my_city == "":
+                    city = class_bot.Bot().get_city(user_id)
+                    self.my_city = city
+                else:
+                    city = self.my_city
                 city_id = self.get_city_id(city)
+
+                
 
             user_link = f"https://vk.com/id{user_info['id']}"
 
@@ -78,8 +90,6 @@ class VK:
                 }            
             return result
 
-
-
     def get_city_id(self, city_name):
             try:
                 city_info = self.vk.database.getCities(country_id=1,
@@ -91,11 +101,11 @@ class VK:
                     return city_id
                 else:
                     print("Город не найден")
+                    class_bot.Bot.get_city(self)
                     return None
             except vk_api.ApiError as e:
                 print("Ошибка при запросе к VK API:", e)
                 return None       
-
 
 
     def get_photo(self, owner_id):     
@@ -129,8 +139,6 @@ class VK:
         for photo in photos_list:
             attachment += f'photo{user_id}_{photo["id"]},'
         return attachment
-
-
 
     def search_couple(self, user_info, offset):
         
@@ -190,6 +198,6 @@ def photo_data_preparation(info, weight=3):
     return data
 
 
-# if __name__ == '__main__':
-#     vk_user = VK()
-#     
+if __name__ == '__main__':
+    vk_user = VK()
+    

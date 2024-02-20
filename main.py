@@ -3,6 +3,8 @@ import os
 import psycopg2
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+load_dotenv()
 
 from model import Users, Photos, Favorites, create_table
 
@@ -11,7 +13,7 @@ from model import Users, Photos, Favorites, create_table
 def create_delete_db(name, command, if_):
     """Функция для создании Базы данных"""
 
-    conn_ = psycopg2.connect(database=os.getenv('LOGIN'), user=os.getenv('LOGIN'), password=os.getenv('PASSWORD'))
+    conn_ = psycopg2.connect(database = os.getenv("DB"), user = os.getenv("LOGIN"), password = os.getenv("PASSWORD"), host=os.getenv("HOST"), port=os.getenv("PORT"))
     conn_.autocommit = True
     with conn_.cursor() as cur:
         sql = f"""{command} DATABASE {if_} {name}"""
@@ -19,10 +21,9 @@ def create_delete_db(name, command, if_):
         cur.execute(sql)
     conn_.close()    
 
-create_delete_db(name=os.getenv('NAME_DB'), command='DROP', if_='IF EXISTS')
-create_delete_db(name=os.getenv('NAME_DB'), command='CREATE', if_='')  
+create_delete_db(name= "db_bot", command='DROP', if_='IF EXISTS')
+create_delete_db(name= "db_bot", command='CREATE', if_='')  
 
-    
 
 def create_connection_DB():
     """Функция для создания объекта-движка, для соединения с БД"""

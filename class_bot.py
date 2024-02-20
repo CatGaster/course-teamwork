@@ -5,9 +5,12 @@ import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
-from class_vk import VK
+from dotenv import load_dotenv
+
+import class_vk
 import main
 
+load_dotenv()
 keyboard_main = VkKeyboard(one_time=False)
 keyboard_main.add_button(label='найти пару', color=VkKeyboardColor.PRIMARY)
 keyboard_main.add_button(label='добавить в избранное', color=VkKeyboardColor.POSITIVE)
@@ -18,7 +21,7 @@ class Bot:
     def __init__(self) -> None:
         self.session = vk_api.VkApi(token=os.getenv('TOKEN_BOT'))
         self.longpoll = VkLongPoll(self.session)
-        self.vk_api = VK()
+        self.vk_api = class_vk.VK()
         self.user = None
         self.offset = -1
         
@@ -53,7 +56,7 @@ class Bot:
                 # elif request == 'добавить в избранное':
                 #     self.add_favorite(user_id)                                   
                 else:
-                    self.send_msg(user_id, 'Ошибка!')
+                    pass
         
     def get_name(self, user_id):
         vk = vk_api.VkApi(token = os.getenv('VK_TOKEN'))
@@ -74,6 +77,22 @@ class Bot:
         responce = self.send_msg(user_id, msg, keyboard=keyboard)
         return responce
     
+
+    #Посылает сообщение с вопросом о городе и возвращает результат
+    def get_city(self, user_id):
+        self.send_msg(user_id, 'Ваш город не указан. Введите его: ')
+        for event in self.longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                city = event.text
+                return city
+                
+    def get_birthday(self, user_id):
+        self.send_msg(user_id, 'Ваш день рождения не указан. Введите его: ')
+        for event in self.longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                birthday = event.text
+                return birthday
+        
 
     def send_user_info(self, user_id):  
         while True:      
