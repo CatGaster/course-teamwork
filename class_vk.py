@@ -18,7 +18,6 @@ class VK:
         self.session = vk_api.VkTools(self.vk_api)  
         self.my_city = ""
         self.vk = self.vk_api.get_api()
-
         
     def get_user_info(self, user_id):
         try:
@@ -32,7 +31,6 @@ class VK:
                 birthday = datetime.strptime(user_info['bdate'], '%d.%m.%Y')
                 age = this_year.year - birthday.year - (
                         (this_year.month, this_year.day) < (birthday.month, birthday.day))
-                print (f'Ваш возраст: {age}')
             except KeyError:
                 # birth_day = input('Введите дату вашего рождения: ')
                 birthday = class_bot.Bot().get_birthday(user_id)
@@ -56,12 +54,17 @@ class VK:
                 if self.my_city == "":
                     city = class_bot.Bot().get_city(user_id)
                     self.my_city = city
+                    bot_send = class_bot.Bot().send_msg(user_id, f'Поиск по городу: {city}')
                 else:
                     city = self.my_city
-                city_id = self.get_city_id(city)
+                city_id = self.get_city_id(city, user_id)
+                while city_id == None:
+                    city = class_bot.Bot().get_city(user_id)
+                    city_id = self.get_city_id(city, user_id)
+                    self.my_city = city
+                    bot_send = class_bot.Bot().send_msg(user_id, f'Поиск по городу: {city}')
 
-                
-
+                    
             user_link = f"https://vk.com/id{user_info['id']}"
 
             user = {'user_id': user_info['id'],
@@ -90,7 +93,7 @@ class VK:
                 }            
             return result
 
-    def get_city_id(self, city_name):
+    def get_city_id(self, city_name, user_id):
             try:
                 city_info = self.vk.database.getCities(country_id=1,
                                                 q=city_name,
@@ -98,14 +101,16 @@ class VK:
                                                 count=1)  # country_id=1 соответствует России
                 if city_info['count'] > 0:
                     city_id = city_info['items'][0]['id']
+                    print (f"Город {city_name} - {city_id}")
                     return city_id
                 else:
-                    print("Город не найден")
-                    class_bot.Bot.get_city(self)
+                    bot_send=class_bot.Bot().send_msg(user_id, f'Город {self.founded} не найден')
+                    print(f"Город не найден")                
                     return None
+                                                 
             except vk_api.ApiError as e:
                 print("Ошибка при запросе к VK API:", e)
-                return None       
+                return None
 
 
     def get_photo(self, owner_id):     

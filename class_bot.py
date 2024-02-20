@@ -80,7 +80,7 @@ class Bot:
 
     #Посылает сообщение с вопросом о городе и возвращает результат
     def get_city(self, user_id):
-        self.send_msg(user_id, 'Ваш город не указан. Введите его: ')
+        self.send_msg(user_id, 'Введите ваш город: ')
         for event in self.longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 city = event.text
