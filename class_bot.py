@@ -51,13 +51,13 @@ class Bot:
                     self.send_first_msg(user_id)                 
                 elif request == 'найти пару':
                     self.offset += 1
-                    self.send_user_info(user_id)  
+                    self.send_user_info(user_id)
                 elif request == 'добавить в избранное':
                     self.add_favorite(user_id)    
                 elif request == 'добавить в черный список':
                     self.add_black_list(user_id)
                 elif request == 'показать избранное':
-                    pass
+                    self.show_favorites(user_id)
                 else:
                     self.send_msg(user_id, 'Ошибка!')
         
@@ -83,7 +83,7 @@ class Bot:
         return response
 
     def send_user_info(self, user_id):  
-        user = self.vk_api.get_user_info(user_id)
+        user = self.vk_api.get_user_info('473204139')
         while True: 
             self.candidate = self.vk_api.search_couple(self.vk_api.get_user_info(user_id), self.offset)                        
             if main.check_users(str(self.candidate['owner_id'])):
@@ -111,8 +111,10 @@ class Bot:
                                           f"{self.candidate['last_name']} теперь в черном списке!")
         return response
 
-    def show_favorites(self):
-        pass
+    def show_favorites(self, user_id):
+        favorites = main.search_show(str(user_id))
+        self.send_msg(user_id, favorites)
+        # print(favorites)
 
 
 if __name__ == '__main__':

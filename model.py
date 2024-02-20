@@ -35,6 +35,7 @@ class Favorites(Base):
     favorite_user_id = sq.Column(sq.Integer, sq.ForeignKey('users.user_id'))
 
     # user = relationship(Users, backref='favorite')
+    # user_favorite = relationship(Users, backref='favorite')
 
 
 class Blacklist(Base):

@@ -72,4 +72,36 @@ def add_black_list(user, candidate):
     session.add(new_ignored_user) 
     session.commit()
 
+
+def search_show(id_):
+    sales = session.query(Users.user_id).filter(Users.owner_id == id_).all()
+    source_id = sales[0][0]
+    with psycopg2.connect(database=os.getenv('NAME_DB'),
+                          user=os.getenv('LOGIN'),
+                          password=os.getenv('PASSWORD')) as conn_:
+        with conn_.cursor() as cur:
+            cur.execute("""
+                        SELECT favorite_user_id FROM favorite
+                        WHERE user_id = %s;
+                        """, (source_id,))
+
+            favorite_list = cur.fetchall()
+
+    result = 'Cписок избранных людей:\n'
+    count = 0
+    for favorite_user in favorite_list:
+        user = (session.query(Users.owner_id,
+                              Users.first_name,
+                              Users.last_name,
+                              Users.user_link)
+                .filter(Users.user_id == favorite_user[0])
+                .all())
+        count += 1
+        result += f'{count}. {user[0][1]} {user[0][2]}, ссылка на профиль: {user[0][3]}\n'
+
+    return result
+
 # print(check_users('344025107'))
+
+
+# search_show("9663572")
