@@ -32,7 +32,7 @@ class VK:
                 birthday = datetime.strptime(user_info['bdate'], '%d.%m.%Y')
                 age = this_year.year - birthday.year - (
                         (this_year.month, this_year.day) < (birthday.month, birthday.day))
-                
+                print (f'Ваш возраст: {age}')
             except KeyError:
                 # birth_day = input('Введите дату вашего рождения: ')
                 birthday = class_bot.Bot().get_birthday(user_id)
