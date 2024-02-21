@@ -29,10 +29,9 @@ class VK:
                 age = this_year.year - birthday.year - (
                         (this_year.month, this_year.day) < (birthday.month, birthday.day))
             except KeyError:
-                birth_day = input('Введите дату вашего рождения: ')
-                birthday = datetime.strptime(birth_day, '%d.%m.%Y')
-                age = this_year.year - birthday.year - (
-                        (this_year.month, this_year.day) < (birthday.month, birthday.day))
+                age = None
+            except ValueError:
+                age = None
 
             gender = user_info['sex']
             if gender == 1:
@@ -41,11 +40,9 @@ class VK:
                 sex = 1
 
             try:
-                # city = user_info['city']['title']
                 city_id = user_info['city']['id']
             except KeyError:
-                city = input('Введите ваш город: ')
-                city_id = self.get_city_id(city)
+                city_id = None
 
             user_link = f"https://vk.com/id{user_info['id']}"
 

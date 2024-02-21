@@ -1,5 +1,6 @@
 import os
 from random import randrange
+from datetime import datetime
 
 import vk_api
 from vk_api.longpoll import VkLongPoll, VkEventType
@@ -69,10 +70,30 @@ class Bot:
 
     def send_first_msg(self, user_id: int):
         """
-        Метод для отправки сообщения ботов, в ответ на "привет"
+        Метод для отправки сообщения ботов, в ответ на "привет",
+        а так же проверка отсутствия параметров у пользователя
         """
 
+        # в get_user_info(user_id) вместо user_id, вставьте id любого пользователя, у которого не хватает параметров:
         self.user = self.vk_api.get_user_info(user_id)
+
+        while self.user['city'] is None:
+            self.user['city'] = self.get_city(user_id)
+
+        if self.user['age'] is None:
+            birth_day = self.get_birthday(user_id)
+            this_year = datetime.now()
+            while True:
+                try:
+                    birthday = datetime.strptime(birth_day, '%d.%m.%Y')
+                    break
+                except ValueError:
+                    birth_day = self.get_birthday(user_id)
+
+            age = this_year.year - birthday.year - (
+                    (this_year.month, this_year.day) < (birthday.month, birthday.day))
+            self.user['age'] = age
+
         db.add_new_user(self.user['owner_id'],
                         self.user['first_name'],
                         self.user['last_name'],
@@ -86,8 +107,8 @@ class Bot:
         Если захочешь посмотреть на пользователей, которые тебе понравились - нажми "Показать избранное". 
         Удачи!😉 """
         keyboard = keyboard_main.get_keyboard()
-        responce = self.send_msg(user_id, msg, keyboard=keyboard)
-        return responce
+        response = self.send_msg(user_id, msg, keyboard=keyboard)
+        return response
 
     def send_candidate_info(self, user_id: int):
         """
@@ -142,3 +163,25 @@ class Bot:
         response = self.send_msg(user_id, f"Вот список пользователей, которые тебе "
                                           f"понравились:\n {message}")
         return response
+
+    def get_city(self, user_id):
+        """
+        Спрашиваем город у пользователя, если он не указан в его профиле
+        """
+        self.send_msg(user_id, 'Введите ваш город: ')
+        for event in self.longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                city = event.text
+                city_id = self.vk_api.get_city_id(city)
+                print(city_id)
+                return city_id
+
+    def get_birthday(self, user_id):
+        """
+        Спрашиваем дату рождения у пользователя, если она не указан в его профиле
+        """
+        self.send_msg(user_id, 'Ваш день рождения не указан. Введите его: ')
+        for event in self.longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                birthday = event.text
+                return birthday
