@@ -16,9 +16,9 @@ load_dotenv()
 
 keyboard_main = VkKeyboard(one_time=False)
 keyboard_main.add_button(label='Найти пару', color=VkKeyboardColor.PRIMARY)
-keyboard_main.add_button(label='Добавить в избранное', color=VkKeyboardColor.POSITIVE)
-keyboard_main.add_button(label='Добавить в черный список', color=VkKeyboardColor.NEGATIVE)
-keyboard_main.add_button(label='Показать список избранных', color=VkKeyboardColor.SECONDARY)
+keyboard_main.add_button(label='В избранное', color=VkKeyboardColor.POSITIVE)
+keyboard_main.add_button(label='В черный список', color=VkKeyboardColor.NEGATIVE)
+keyboard_main.add_button(label='Избранные', color=VkKeyboardColor.SECONDARY)
 
 
 class Bot:
@@ -59,11 +59,11 @@ class Bot:
                 elif request == 'найти пару':
                     self.offset += 1
                     self.send_candidate_info(user_id)
-                elif request == 'добавить в избранное':
+                elif request == 'в избранное':
                     self.add_favorite(user_id)
-                elif request == 'добавить в черный список':
+                elif request == 'в черный список':
                     self.add_black_list(user_id)
-                elif request == 'показать список избранных':
+                elif request == 'избранные':
                     self.show_favorite(user_id)
                 else:
                     self.send_msg(user_id, 'Ошибка! Напиши мне "Привет"')
@@ -102,9 +102,9 @@ class Bot:
         name = self.user['first_name']
         msg = f"""Привет, {name}! Я - бот, который поможет тебе подобрать пару ❤️.
         Нажимая на кнопку "Найти пару", я буду отправлять тебе кандидатов для знакомства. 
-        Если тебе понравился человек - нажми "Добавить в избранный список" 📔, 
-        но если полагаешь, что звезды не сойдутся - нажми на "Добавить в черный список" 💔. 
-        Если захочешь посмотреть на пользователей, которые тебе понравились - нажми "Показать избранное". 
+        Если тебе понравился человек - нажми "В избранный список" 📔, 
+        но если полагаешь, что звезды не сойдутся - нажми на "В черный список" 💔. 
+        Если захочешь посмотреть на пользователей, которые тебе понравились - нажми "Избранные". 
         Удачи!😉 """
         keyboard = keyboard_main.get_keyboard()
         response = self.send_msg(user_id, msg, keyboard=keyboard)
@@ -173,7 +173,6 @@ class Bot:
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
                 city = event.text
                 city_id = self.vk_api.get_city_id(city)
-                print(city_id)
                 return city_id
 
     def get_birthday(self, user_id):
